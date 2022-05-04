@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/app")
+//todo Зачем в названии класса Rest? И так понятно, что это рест контроллер.
 public class ProductRestController {
     private ProductService productService;
 
@@ -21,6 +22,7 @@ public class ProductRestController {
         this.productService = productService;
     }
 
+    //todo Можно в одну строку возвращать результат.
     @GetMapping("/products")
     public List<Product> showAllProducts() {
         List<Product> allProducts = productService.findAllProducts();
@@ -31,17 +33,21 @@ public class ProductRestController {
     public Product getProduct(@PathVariable(name="id") Long id) {
         Product product = productService.findByIdProduct(id);
         if(product == null) {
+            //todo Можно использовать String.format()
             throw new EntityNotFoundException("There is no product with id = " + id);
         }
         return product;
     }
 
+    //todo Эндпоинт будет добавлять продукты с одинаковым title и price в базу бесконечно.
+    // Наверное, так не должно быть.
     @PostMapping("/products")
     public Product saveOrUpdateProduct(@RequestBody Product product) {
         productService.saveOrUpdateProduct(product);
         return product;
     }
 
+    //todo Логику поиска и удаления продукта убрать в сервис. Зачем она в контроллере?
     @DeleteMapping("/products/{id}")
     public String deleteProduct(@PathVariable(name="id") Long id) {
         Product product = productService.findByIdProduct(id);

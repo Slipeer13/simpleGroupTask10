@@ -27,6 +27,9 @@ public class CartServiceimpl implements CartService{
     @Override
     public Product addProductToCart(Product product, Long cartId) {
         Product productFromDB = null;
+        //todo Зачем вытаскивать все существующие продукты?
+        // Хорошо, когда продуктов в БД не много. Но если их там несколько миллионов?
+        // Ты сформируешь список из всех этих продуктов и будешь проверять, есть ли в этом списке искомый?
         List<Product> productList = productService.findAllProducts();
         if(productList.contains(product)) {
             Cart cart = findByIdCart(cartId);
@@ -41,6 +44,7 @@ public class CartServiceimpl implements CartService{
     public Product deleteProductFromCart(Product product, Long cartId) {
         Product productFromCart = null;
         Cart cart = findByIdCart(cartId);
+        //todo Если корзины с заданным id нет, то упадет NPE
         List<Product> productList = cart.getProductList();
         if(productList.contains(product)) {
             productList.remove(product);
@@ -64,6 +68,7 @@ public class CartServiceimpl implements CartService{
     @Override
     public List<Product> findAllProductsFromCart(Long cartId) {
         Cart cart = findByIdCart(cartId);
+        //todo Если корзины с заданным id нет, то упадет NPE
         return cart.getProductList();
     }
 
