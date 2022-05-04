@@ -14,6 +14,8 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //todo Не рекомендуется в имени использовать уточнение структуры (например List).
+    // Лучше назвать просто products. "Чистый код", Роберт Мартин, 1 глава. :)
     @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "cart_product", joinColumns = @JoinColumn(name = "cart_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> productList;
