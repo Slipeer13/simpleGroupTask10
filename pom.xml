@@ -10,10 +10,10 @@
     </parent>
     <groupId>com.example</groupId>
 <!--    todo Почему simpleGroupTask7?   -->
-    <artifactId>simpleGroupTask7</artifactId>
+    <artifactId>simpleGroupTask10</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>simpleGroupTask7</name>
-    <description>simpleGroupTask7</description>
+    <name>simpleGroupTask10</name>
+    <description>simpleGroupTask10</description>
     <properties>
         <java.version>1.8</java.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
@@ -50,6 +50,12 @@
                 <artifactId>mapstruct</artifactId>
                 <version>${org.mapstruct.version}</version>
             </dependency>
+        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.2.0.Final</version>
+        </dependency>
     </dependencies>
 
     <build>

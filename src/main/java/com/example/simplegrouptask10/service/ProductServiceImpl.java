@@ -5,6 +5,8 @@ import com.example.simplegrouptask10.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,23 +26,36 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findByIdProduct(long id) {
-        Product product = null;
+        Product product;
         Optional<Product> optionalProduct = productRepository.findById(id);
         if(optionalProduct.isPresent()) {
             product = optionalProduct.get();
+        }
+        else {
+            //todo Можно использовать String.format()
+            throw new EntityNotFoundException(String.format("There is no product with id = %s", id));
         }
         return product;
     }
 
     @Override
     public void deleteByIdProduct(long id) {
+        findByIdProduct(id);
         productRepository.deleteById(id);
     }
 
     @Override
-    public void saveOrUpdateProduct(Product product) {
-        productRepository.save(product);
+    public Product saveOrUpdateProduct(Product product) {
+        if (product != null) {
+            Product productFromDB = productRepository.findByTitleAndPrice(product.getTitle(), product.getPrice());
+            if (product.equals(productFromDB)) {
+                throw new EntityExistsException("there is such a product in database");
+            }
+            productRepository.save(product);
+            return productRepository.findByTitleAndPrice(product.getTitle(), product.getPrice());
+        } else {
+            throw new EntityNotFoundException("the product is null");
+        }
     }
-
 
 }
