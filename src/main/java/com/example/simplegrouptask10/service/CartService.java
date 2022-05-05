@@ -10,9 +10,9 @@ import java.util.List;
 @Service
 public interface CartService {
 
-    Product addProductToCart(Product product, Long cartId);
+    Product addProductToCart(Long productId, Long cartId);
 
-    Product deleteProductFromCart(Product product, Long cartId);
+    Product deleteProductFromCart(Long productId, Long cartId);
 
     Cart findByIdCart(long id);
 

@@ -6,15 +6,19 @@ import com.example.simplegrouptask10.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/app")
 //todo Зачем в названии класса Rest? И так понятно, что это рест контроллер.
-public class ProductRestController {
+public class ProductController {
     private ProductService productService;
 
     @Autowired
@@ -25,35 +29,27 @@ public class ProductRestController {
     //todo Можно в одну строку возвращать результат.
     @GetMapping("/products")
     public List<Product> showAllProducts() {
-        List<Product> allProducts = productService.findAllProducts();
-        return allProducts;
+        return productService.findAllProducts();
     }
 
     @GetMapping("/products/{id}")
     public Product getProduct(@PathVariable(name="id") Long id) {
-        Product product = productService.findByIdProduct(id);
-        if(product == null) {
-            //todo Можно использовать String.format()
-            throw new EntityNotFoundException("There is no product with id = " + id);
-        }
-        return product;
+        return productService.findByIdProduct(id);
     }
 
     //todo Эндпоинт будет добавлять продукты с одинаковым title и price в базу бесконечно.
     // Наверное, так не должно быть.
     @PostMapping("/products")
-    public Product saveOrUpdateProduct(@RequestBody Product product) {
-        productService.saveOrUpdateProduct(product);
-        return product;
+    public Product saveOrUpdateProduct(@Valid @RequestBody Product product, BindingResult bindingResult) {
+        if(!bindingResult.hasErrors()) {
+            throw new EntityNotFoundException("the product title must be min 2 symbols and price must be positive");
+        }
+        return productService.saveOrUpdateProduct(product);
     }
 
     //todo Логику поиска и удаления продукта убрать в сервис. Зачем она в контроллере?
     @DeleteMapping("/products/{id}")
     public String deleteProduct(@PathVariable(name="id") Long id) {
-        Product product = productService.findByIdProduct(id);
-        if(product == null) {
-            throw new EntityNotFoundException("There is no product with id = " + id);
-        }
         productService.deleteByIdProduct(id);
         return "Product with id " + id + "was deleted";
     }

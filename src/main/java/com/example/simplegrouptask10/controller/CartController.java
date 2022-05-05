@@ -1,11 +1,8 @@
 package com.example.simplegrouptask10.controller;
 
-import com.example.simplegrouptask10.dto.ProductDTO;
 import com.example.simplegrouptask10.entity.Cart;
 import com.example.simplegrouptask10.entity.Product;
 import com.example.simplegrouptask10.exceptionHandling.ProductIncorrectData;
-import com.example.simplegrouptask10.mapper.ProductListMapper;
-import com.example.simplegrouptask10.mapper.ProductMapper;
 import com.example.simplegrouptask10.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,23 +16,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/app")
 //todo Зачем Rest в названии класса?
-public class CartRestController {
+public class CartController {
     private CartService cartService;
-    private ProductMapper productMapper;
-    private ProductListMapper productListMapper;
 
     @Autowired
     public void setCartService(CartService cartService) {
         this.cartService = cartService;
-    }
-
-    @Autowired
-    public void setProductMapper(ProductMapper productMapper) {
-        this.productMapper = productMapper;
-    }
-    @Autowired
-    public void setProductListMapper(ProductListMapper productListMapper) {
-        this.productListMapper = productListMapper;
     }
 
     @PostMapping("/cart")
@@ -46,8 +32,7 @@ public class CartRestController {
     //todo Можно возвращать в одну строку результат.
     @GetMapping("/cart")
     public List<Cart> showAllCarts() {
-        List<Cart> allCarts = cartService.findAll();
-        return allCarts;
+        return cartService.findAll();
     }
 
     //todo Убери логику в сервис.
@@ -58,36 +43,24 @@ public class CartRestController {
     // или чтобы получать на входе только нужные аттрибуты.
     // Если тут используем ДТО, то, наверное, в ней лишнее поле id? Либо я не понял задумки, зачем нужно ДТО.
     @GetMapping("/cart/{cartId}")
-    public List<ProductDTO> showProductFromCart(@PathVariable Long cartId) {
-        List<Product> allProducts = cartService.findAllProductsFromCart(cartId);
+    public List<Product> showProductFromCart(@PathVariable Long cartId) {
         //todo Можно возвращать в одну строку.
-        List<ProductDTO> productDTOList = productListMapper.productToProductDto(allProducts);
-
-        return productDTOList;
+        return cartService.findAllProductsFromCart(cartId);
     }
 
     //todo Тоже не понятно, зачем Dto, если она полностью повторяет сущность. Почему не получать сразу сущность?
     // Вообще не очень понятна необходимость для получения в эндпоинт передавать джейсон продукта полностью.
     // Логичнее добавлять в корзину продукт по его id. Или это требование задания в курсе, который ты проходишь?
     @PutMapping("/cart/{cartId}")
-    public ProductDTO addProductToCart(@RequestBody ProductDTO productDTO, @PathVariable Long cartId) {
-        Product product = productMapper.INSTANCE.productDTOToProduct(productDTO);
-        Product productFromDB =  cartService.addProductToCart(product, cartId);
-        if (productFromDB == null) {
-            throw new EntityNotFoundException("There is no product");
-        }
-        return productDTO;
+    public Product addProductToCart(@RequestBody Long productId, @PathVariable Long cartId) {
+        return cartService.addProductToCart(productId, cartId);
     }
 
     //todo Мне кажется, что название метода не корректное. Может лучше deleteProductFromCart?
     // Я бы тоже удалял продукт по id.
     @DeleteMapping("/cart/{cartId}")
-    public String deleteProductToCart(@RequestBody ProductDTO productDTO, @PathVariable Long cartId) {
-        Product product = productMapper.INSTANCE.productDTOToProduct(productDTO);
-        Product productFromCart = cartService.deleteProductFromCart(product, cartId);
-        if (productFromCart == null) {
-            throw new EntityNotFoundException("There is no product from cart");
-        }
+    public String deleteProductFromCart(@RequestBody Long productId, @PathVariable Long cartId) {
+        Product productFromCart = cartService.deleteProductFromCart(productId, cartId);
         return "Product  "  + productFromCart.getTitle() + " was deleted from cart";
     }
 
