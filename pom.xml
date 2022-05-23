@@ -9,7 +9,6 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-<!--    todo Почему simpleGroupTask7?   -->
     <artifactId>simpleGroupTask10</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>simpleGroupTask10</name>
