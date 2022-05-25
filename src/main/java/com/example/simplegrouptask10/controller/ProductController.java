@@ -17,7 +17,6 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("/app")
-//todo Зачем в названии класса Rest? И так понятно, что это рест контроллер.
 public class ProductController {
     private ProductService productService;
 
@@ -26,7 +25,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-    //todo Можно в одну строку возвращать результат.
     @GetMapping("/products")
     public List<Product> showAllProducts() {
         return productService.findAllProducts();
@@ -37,17 +35,18 @@ public class ProductController {
         return productService.findByIdProduct(id);
     }
 
-    //todo Эндпоинт будет добавлять продукты с одинаковым title и price в базу бесконечно.
-    // Наверное, так не должно быть.
+    //todo Если следовать принципам rest, то POST - create, PUT - update. Их не принято объединять в один метод.
+    // Для чего нужен конкретно этот метод не понятно. Судя по названию должен создавать новый продукт или обновлять существующий.
+    // Если погружаться в логику сервиса, то метод только создаёт новые записи.
     @PostMapping("/products")
     public Product saveOrUpdateProduct(@Valid @RequestBody Product product, BindingResult bindingResult) {
+        //todo Вот тут не понял. Если ошибок валидации нет, то мы бросаем эксепшен?
         if(!bindingResult.hasErrors()) {
             throw new EntityNotFoundException("the product title must be min 2 symbols and price must be positive");
         }
         return productService.saveOrUpdateProduct(product);
     }
 
-    //todo Логику поиска и удаления продукта убрать в сервис. Зачем она в контроллере?
     @DeleteMapping("/products/{id}")
     public String deleteProduct(@PathVariable(name="id") Long id) {
         productService.deleteByIdProduct(id);
