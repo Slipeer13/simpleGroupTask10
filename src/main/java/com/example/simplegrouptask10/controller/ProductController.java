@@ -38,19 +38,30 @@ public class ProductController {
     //todo Если следовать принципам rest, то POST - create, PUT - update. Их не принято объединять в один метод.
     // Для чего нужен конкретно этот метод не понятно. Судя по названию должен создавать новый продукт или обновлять существующий.
     // Если погружаться в логику сервиса, то метод только создаёт новые записи.
+
+    // Но ведь метод: productRepository.save(product); сохраняет или обновляет продукт? в зависимости есть такой id в базе или нет
+    //https://stackoverflow.com/questions/38893831/spring-data-crudrepositorys-save-method-and-update
     @PostMapping("/products")
-    public Product saveOrUpdateProduct(@Valid @RequestBody Product product, BindingResult bindingResult) {
+    public Product saveProduct(@Valid @RequestBody Product product, BindingResult bindingResult) {
         //todo Вот тут не понял. Если ошибок валидации нет, то мы бросаем эксепшен?
-        if(!bindingResult.hasErrors()) {
+        if(bindingResult.hasErrors()) {
             throw new EntityNotFoundException("the product title must be min 2 symbols and price must be positive");
         }
         return productService.saveOrUpdateProduct(product);
     }
 
-    @DeleteMapping("/products/{id}")
-    public String deleteProduct(@PathVariable(name="id") Long id) {
+    @PutMapping("/products")
+    public Product updateProduct(@Valid @RequestBody Product product, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            throw new EntityNotFoundException("the product title must be min 2 symbols and price must be positive");
+        }
+        return productService.saveOrUpdateProduct(product);
+    }
+
+    @DeleteMapping("/products")
+    public String deleteProduct(@RequestBody Long id) {
         productService.deleteByIdProduct(id);
-        return "Product with id " + id + "was deleted";
+        return "Product with id " + id + " was deleted";
     }
 
     @ExceptionHandler
