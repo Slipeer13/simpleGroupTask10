@@ -27,6 +27,14 @@ public class CartController {
         return cartService.findAllProductsFromCart();
     }
 
+    //todo Разве лонги десериализуются таким образом? У тебя точно методы этого контроллера работают?
+    // У меня при попытке отправить в теле запроса
+    // {
+    //    "productId": 2
+    // }
+    // приложение бросает ошибку.
+    // Чтобы передать в теле запроса только айдишник, у тебя в приложении должен быть определён класс,
+    // в атрибутах которого определён айдишник. И тебе нужно в теле запрос передавать джейсон этого класса.
     @PutMapping("/cart")
     public Product addProductToCart(@RequestBody Long productId) {
         return cartService.addProductToCart(productId);

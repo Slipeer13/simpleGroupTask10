@@ -35,15 +35,9 @@ public class ProductController {
         return productService.findByIdProduct(id);
     }
 
-    //todo Если следовать принципам rest, то POST - create, PUT - update. Их не принято объединять в один метод.
-    // Для чего нужен конкретно этот метод не понятно. Судя по названию должен создавать новый продукт или обновлять существующий.
-    // Если погружаться в логику сервиса, то метод только создаёт новые записи.
-
-    // Но ведь метод: productRepository.save(product); сохраняет или обновляет продукт? в зависимости есть такой id в базе или нет
-    //https://stackoverflow.com/questions/38893831/spring-data-crudrepositorys-save-method-and-update
+    //todo Всё таки метод контроллера для добавления продукта, а не сохранения продукта (не совсем корректное название метода).
     @PostMapping("/products")
     public Product saveProduct(@Valid @RequestBody Product product, BindingResult bindingResult) {
-        //todo Вот тут не понял. Если ошибок валидации нет, то мы бросаем эксепшен?
         if(bindingResult.hasErrors()) {
             throw new EntityNotFoundException("the product title must be min 2 symbols and price must be positive");
         }
