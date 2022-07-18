@@ -24,12 +24,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    //todo По порядку:
-    //      1. Дополнительная локальная переменная ни к чему. Ты же можешь просто в if возвращать optionalProduct.get()
-    //      2. else не принято переносить на новую строку после фигурной скобки. "} else {" более привычная запись.
-    //      3. else можно вообще убрать, если делать ретурн из if. throw будет просто после условия.
-    //      4. Всю логику метода можно переписать просто в одну строку. Присмотрись к методу orElseThrow() класса Optional.
-    //      В этом классе вообще много интересных методов.
     public Product findByIdProduct(long id) {
         return productRepository.findById(id).orElseThrow(()-> new EntityNotFoundException(String.format("There is no product with id = %s", id)));
     }
@@ -41,18 +35,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    //todo Лучше бросить эксепшен, если продукт null в начале метода. Остальную логику тогда можно оставить ниже.
     public Product saveOrUpdateProduct(Product product) {
         if (product == null) {
             throw new EntityNotFoundException("the product is null");
         }
+        //todo Если задать уникальность записей на уровне базы, то эту логику можно будет тут не писать.
+        // Хибер сам будет бросать эксепшен при попытке записи некорректных данных.
+        // Запрос на получение продукта из БД будет не нужен. Предлагаю поэкспериментировать.
         Product productFromDB = productRepository.findByTitleAndPrice(product.getTitle(), product.getPrice());
         if (product.equals(productFromDB)) {
             throw new EntityExistsException("there is such a product in database");
         }
-            //todo Зачем снова получать из БД продукт по названию и прайсу?
-            // Он ведь уже есть в данном случае: productFromDB.
-            // Можно просто return productRepository.save(product), ведь этот метод возвращает сохраняемую сущность.
         return productRepository.save(product);
     }
 
