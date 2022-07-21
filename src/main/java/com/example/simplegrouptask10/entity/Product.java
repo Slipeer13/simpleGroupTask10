@@ -1,11 +1,13 @@
 package com.example.simplegrouptask10.entity;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -25,14 +27,6 @@ public class Product {
     @Min(value = 1, message = "price must be over 0")
     private Integer price;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Product product = (Product) o;
-        return title.equals(product.title) && price.equals(product.price);
-    }
-
     //todo Не понимаю, почему хэшкод нужно считать только по названию и прайсу. То же самое про иквалс.
     // Я могу предположить, что ты их переопределил таким образом, чтобы реализовать метод добавления и обновления продукта.
     // Но это же частный случай, который может привести к одинаковости объектов с разными id.
@@ -49,8 +43,5 @@ public class Product {
     // 1. возможно, в корзине нужно хранить только ид продукта, а не сам инстанс продукта.
     // 2. а возможно, нужно менять логику обновления продукта. И обновлять продукты не только в БД, но и в корзине,
     // если такие продукты в неё уже были добавлены.
-    @Override
-    public int hashCode() {
-        return Objects.hash(title, price);
-    }
+
 }
