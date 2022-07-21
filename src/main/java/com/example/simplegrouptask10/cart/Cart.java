@@ -1,10 +1,8 @@
 package com.example.simplegrouptask10.cart;
 
-import com.example.simplegrouptask10.entity.Product;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 
 @Component
@@ -17,29 +15,5 @@ import java.util.HashMap;
 // Для размещения методов логики должен быть отдельный класс (dao). Например, для доступа к продукту есть ProductRepository.
 // 2. Зачем в БД остались отношения корзины и связи между продуктом и корзиной?
 public class Cart {
-    private HashMap<Product, Integer> products = new HashMap<>();
-
-    //todo Можно переписать в 1 строку добавление продукта. Обрати внимание на метод хэшмапы getOrDefault.
-    // Либо, можно ещё проще сделать одним методом HashMap. Предлагаю тебе поисследовать класс HashMap.
-    // И зачем метод возвращает продукт? Он ведь продукт никак не меняет.
-    // В том месте, где ты вызываешь этот метод и так уже есть этот продукт, который ты передаёшь в параметрах метода.
-    public Product addProductToCart(Product product) {
-        if(products.containsKey(product)) {
-            products.put(product, products.get(product) + 1);
-        } else {
-            products.put(product, 1);
-        }
-        return product;
-    }
-
-    public void deleteProductFromCart(Product product) {
-        if(!products.containsKey(product)) {
-            throw new EntityNotFoundException("this product is not in the cart");
-        }
-        if(products.get(product).equals(1)) {
-            products.remove(product);
-        } else {
-            products.put(product, products.get(product) - 1);
-        }
-    }
+    private final HashMap<Long, Integer> products = new HashMap<>();
 }

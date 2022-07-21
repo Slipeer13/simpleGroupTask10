@@ -1,7 +1,7 @@
 package com.example.simplegrouptask10.service;
 
-import com.example.simplegrouptask10.cart.Cart;
-import com.example.simplegrouptask10.entity.Product;
+import com.example.simplegrouptask10.dao.CartRepository;
+import com.example.simplegrouptask10.dao.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,42 +10,41 @@ import java.util.Map;
 
 @Service
 public class CartServiceImpl implements CartService{
-
-    private ProductService productService;
-    private Cart cart;
+    private ProductRepository productRepository;
+    private CartRepository cartRepository;
 
     @Autowired
-    public void setProductService(ProductService productService) {
-        this.productService = productService;
+    public void setProductRepository(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
     @Autowired
-    public void setCart(Cart cart) {
-        this.cart = cart;
+    public void setCartRepository(CartRepository cartRepository) {
+        this.cartRepository = cartRepository;
     }
 
     @Override
-    public Product addProductToCart(Long productId) {
-        Product product = productService.findByIdProduct(productId);
-        cart.addProductToCart(product);
-        return product;
+    public void addProductToCart(Long productId) {
+        boolean exist = productRepository.existsById(productId);
+        if(exist) {
+            cartRepository.addProductToCart(productId);
+        } else {
+            throw new EntityNotFoundException("there is no product with this id in the database");
+        }
     }
 
     @Override
-    public Product deleteProductFromCart(Long productId) {
-        Product product = productService.findByIdProduct(productId);
-        Map<Product, Integer> products = cart.getProducts();
-        if(products.containsKey(product)) {
-            cart.deleteProductFromCart(product);
+    public void deleteProductFromCart(Long productId) {
+        if(cartRepository.getProducts().containsKey(productId)) {
+            cartRepository.deleteProductFromCart(productId);
         }
         else {
             throw new EntityNotFoundException("There is no product to cart");
         }
-        return product;
     }
 
     @Override
-    public Map<Product, Integer> findAllProductsFromCart() {
-        return cart.getProducts();
+    public Map<Long, Integer> findAllProductsFromCart() {
+        return cartRepository.getProducts();
     }
 
 
