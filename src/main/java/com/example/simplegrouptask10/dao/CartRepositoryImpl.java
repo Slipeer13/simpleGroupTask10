@@ -26,7 +26,7 @@ public class CartRepositoryImpl implements CartRepository{
     // В том месте, где ты вызываешь этот метод и так уже есть этот продукт, который ты передаёшь в параметрах метода.
     @Override
     public void addProductToCart(Long productId) {
-        products.put(productId, products.getOrDefault(productId, 0) + 1);
+        products.merge(productId,1, Integer::sum);
     }
 
     @Override
